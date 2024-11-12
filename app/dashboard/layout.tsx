@@ -1,11 +1,12 @@
 "use client";
-
 import NavUser from "@/components/app/navi-user";
 import { Separator } from "@/components/ui/separator";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
+  SidebarGroup,
+  SidebarGroupLabel,
   SidebarInset,
   SidebarMenu,
   SidebarMenuButton,
@@ -15,25 +16,27 @@ import {
 } from "@/components/ui/sidebar";
 import { History, Home, List } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function DashboardLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = usePathname();
   const sidebarMenuItemData = [
-    { label: "ホーム", link: "#" ,icon:Home},
-    { label: "スペース", link: "#" ,icon:List},
-    { label: "履歴", link: "#" ,icon:History},
+    { label: "ホーム", link: "/dashboard" ,icon:Home},
+    { label: "スペース一覧", link: "/dashboard/spaces" ,icon:List},
+    { label: "履歴", link: "/dashboard/history" ,icon:History},
   ];
   return (
     <SidebarProvider>
-      <Sidebar variant="inset" collapsible="icon">
+      <Sidebar variant="inset">
         <SidebarContent>
           <SidebarMenu>
             {sidebarMenuItemData.map((element)=> 
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild >
+            <SidebarMenuItem key={element.link}>
+              <SidebarMenuButton asChild isActive={pathname===element.link}>
                 <Link href={element.link}>
                   <element.icon />
                   <span>{element.label}</span>
@@ -41,6 +44,18 @@ export default function DashboardLayout({
               </SidebarMenuButton>
             </SidebarMenuItem>)}
           </SidebarMenu>
+          <SidebarGroup>
+            <SidebarGroupLabel>スペース</SidebarGroupLabel>
+            <SidebarMenu>
+              <SidebarMenuItem>
+              <SidebarMenuButton asChild >
+                <Link href={"#"}>
+                  <span>メンマの部屋</span>
+                </Link>
+              </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroup>
         </SidebarContent>
         <SidebarFooter>
           <NavUser
