@@ -1,5 +1,6 @@
 "use client";
 import NavUser from "@/components/app/navi-user";
+import { SpaceData } from "@/components/types/space";
 import { Separator } from "@/components/ui/separator";
 import {
   Sidebar,
@@ -7,6 +8,7 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupLabel,
+  SidebarHeader,
   SidebarInset,
   SidebarMenu,
   SidebarMenuButton,
@@ -25,35 +27,52 @@ export default function DashboardLayout({
 }>) {
   const pathname = usePathname();
   const sidebarMenuItemData = [
-    { label: "ホーム", link: "/dashboard" ,icon:Home},
-    { label: "スペース一覧", link: "/dashboard/spaces" ,icon:List},
-    { label: "履歴", link: "/dashboard/history" ,icon:History},
+    { label: "ホーム", link: "/dashboard", icon: Home },
+    { label: "スペース一覧", link: "/dashboard/spaces", icon: List },
+    { label: "履歴", link: "/dashboard/history", icon: History },
+  ];
+  const spaceTestData: SpaceData[] = [
+    { id: "1", name: "メンマの部屋" },
+    { id: "2", name: "ずんだの部屋" },
+    { id: "3", name: "ひよこの部屋" },
   ];
   return (
     <SidebarProvider>
       <Sidebar variant="inset">
+        <SidebarHeader>
+
+        </SidebarHeader>
         <SidebarContent>
-          <SidebarMenu>
-            {sidebarMenuItemData.map((element)=> 
-            <SidebarMenuItem key={element.link}>
-              <SidebarMenuButton asChild isActive={pathname===element.link}>
-                <Link href={element.link}>
-                  <element.icon />
-                  <span>{element.label}</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>)}
+          <SidebarGroup>
+              <SidebarMenu>
+            {sidebarMenuItemData.map((element) => (
+              <SidebarMenuItem key={element.link}>
+                <SidebarMenuButton asChild isActive={pathname === element.link}>
+                  <Link href={element.link}>
+                    <element.icon />
+                    <span>{element.label}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
           </SidebarMenu>
+          </SidebarGroup>
+        
           <SidebarGroup>
             <SidebarGroupLabel>スペース</SidebarGroupLabel>
             <SidebarMenu>
-              <SidebarMenuItem>
-              <SidebarMenuButton asChild >
-                <Link href={"#"}>
-                  <span>メンマの部屋</span>
-                </Link>
-              </SidebarMenuButton>
-              </SidebarMenuItem>
+              {spaceTestData.map((element) => (
+                <SidebarMenuItem key={element.id}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={pathname.split("/").slice(-1)[0] === element.id}
+                  >
+                    <Link href={"/dashboard/spaces/" + element.id}>
+                      <span>{element.name}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
             </SidebarMenu>
           </SidebarGroup>
         </SidebarContent>
