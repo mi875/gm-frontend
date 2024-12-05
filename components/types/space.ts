@@ -1,4 +1,6 @@
 export interface SpaceData {
     id: string;
-    name: string;  
+    nameName: string;
+    timeOfBorn: string;
+    members: { email: string, admin: boolean }[];
 }
