@@ -40,10 +40,26 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { fetchUserData, logoutUser } from "@/components/api/methos";
+import { useCookies } from "next-client-cookies";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function NavUser({ user }: { user: UserData }) {
+  const [data, setData] = useState<UserData|undefined>(undefined);
+  const router = useRouter();
+  const cookieStore = useCookies();
   const { isMobile } = useSidebar();
   const { theme, setTheme } = useTheme();
+  useEffect(() => {
+const fetchUser = async () => {
+  fetchUserData(cookieStore).then((data) => setData(data));
+};
+fetchUser();
+  }, []);
+  if (!data) {
+    return (<></>);
+  }
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -55,12 +71,12 @@ export default function NavUser({ user }: { user: UserData }) {
                 className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground base"
               >
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
+                  <AvatarImage src={data.avatar} alt={data.name} />
                   <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">{user.name}</span>
-                  <span className="truncate text-xs">{user.email}</span>
+                  <span className="truncate font-semibold">{data.name}</span>
+                  <span className="truncate text-xs">{data.email}</span>
                 </div>
                 <ChevronsUpDown className="ml-auto size-4" />
               </SidebarMenuButton>
@@ -74,12 +90,12 @@ export default function NavUser({ user }: { user: UserData }) {
               <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                   <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src={user.avatar} alt={user.name} />
+                    <AvatarImage src={data.avatar} alt={data.name} />
                     <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">{user.name}</span>
-                    <span className="truncate text-xs">{user.email}</span>
+                    <span className="truncate font-semibold">{data.name}</span>
+                    <span className="truncate text-xs">{data.email}</span>
                   </div>
                 </div>
               </DropdownMenuLabel>
@@ -129,7 +145,14 @@ export default function NavUser({ user }: { user: UserData }) {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>キャンセル</AlertDialogCancel>
-                <AlertDialogAction>ログアウト</AlertDialogAction>
+                <AlertDialogAction
+                  onClick={() => {
+                    logoutUser(cookieStore);
+                    router.push("/login");
+                  }}
+                >
+                  ログアウト
+                </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
