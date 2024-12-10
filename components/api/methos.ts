@@ -27,9 +27,10 @@ export async function loginUser(email: string, password: string, cookieStore: Co
     });
     if (result.ok) {
         const jsonResult = await result.json();
-        cookieStore.set('token', jsonResult["token"]);
+        cookieStore.set('token', jsonResult["token"],{expires:259200});
         return true;
     } else {
         return false;
     }
 }
+
