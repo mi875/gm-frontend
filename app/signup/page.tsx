@@ -22,7 +22,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createUser } from "@/components/api/methos";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 const FormSchema = z
   .object({
@@ -46,15 +48,19 @@ const FormSchema = z
   });
 
 export default function Signup() {
-const router = useRouter();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const signupError = searchParams.get("signupError") ? 1 : 0;
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });
 
-async  function onSubmit(values: z.infer<typeof FormSchema>) {
-    const result =  await createUser(values.email,values.name, values.password);
-    if(result){
+  async function onSubmit(values: z.infer<typeof FormSchema>) {
+    const result = await createUser(values.email, values.name, values.password);
+    if (result) {
       router.push("/login?afterSignup=1");
+    } else {
+      router.push("/signup?signupError=1");
     }
     console.log(values);
   }
@@ -67,6 +73,15 @@ async  function onSubmit(values: z.infer<typeof FormSchema>) {
           <CardDescription>
             メールとパスワードを入力してログインしてください。
           </CardDescription>
+          {signupError ? (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>エラー</AlertTitle>
+              <AlertDescription>すでにアカウントが存在します</AlertDescription>
+            </Alert>
+          ) : (
+            <></>
+          )}
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -90,18 +105,14 @@ async  function onSubmit(values: z.infer<typeof FormSchema>) {
                   </FormItem>
                 )}
               />
-               <FormField
+              <FormField
                 control={form.control}
                 name="name"
                 render={({ field }) => (
                   <FormItem className="grid gap-2">
                     <FormLabel>名前</FormLabel>
                     <FormControl>
-                      <Input
-                        type="text"
-                        required
-                        {...field}
-                      />
+                      <Input type="text" required {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

@@ -23,6 +23,9 @@ import { useForm } from "react-hook-form";
 import { useSearchParams } from "next/navigation";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, Check } from "lucide-react";
+import { loginUser } from "@/components/api/methos";
+import { useRouter } from "next/navigation";
+import { useCookies } from "next-client-cookies";
 
 const FormSchema = z.object({
   email: z.string().email(),
@@ -32,15 +35,21 @@ const FormSchema = z.object({
 });
 
 export default function Login() {
+  const router = useRouter();
+  const cookieStore = useCookies();
   const searchParams = useSearchParams();
   const afterSignup = searchParams.get("afterSignup") ? 1 : 0;
   const loginError = searchParams.get("loginError") ? 1 : 0;
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });
-  function onSubmit(values: z.infer<typeof FormSchema>) {
-    
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof FormSchema>) {
+    const result = await loginUser(values.email, values.password,cookieStore);
+    if (result) {
+      router.push("/dashboard");
+    } else {
+      router.push("/login?loginError=1");
+    }
   }
   return (
     <div className="flex h-screen w-full items-center justify-center px-4">
@@ -61,14 +70,14 @@ export default function Login() {
           ) : (
             <></>
           )}
-           {loginError ? (
-             <Alert variant="destructive">
-             <AlertCircle className="h-4 w-4" />
-             <AlertTitle>エラー</AlertTitle>
-             <AlertDescription>
+          {loginError ? (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>エラー</AlertTitle>
+              <AlertDescription>
                 メールアドレスまたはパスワードが間違っています
-             </AlertDescription>
-           </Alert>
+              </AlertDescription>
+            </Alert>
           ) : (
             <></>
           )}

@@ -1,6 +1,5 @@
+import { Cookies } from "next-client-cookies";
 
-
-import { useCookies } from 'next-client-cookies';
 
 const endpoint = process.env.NEXT_PUBLIC_ENDPOINT;
 export async function createUser(email: string, name: string, password: string) {
@@ -18,8 +17,8 @@ export async function createUser(email: string, name: string, password: string) 
     }
 }
 
-export async function loginUser(email: string, password: string) {
-    const result = await fetch(endpoint + '/api/login', {
+export async function loginUser(email: string, password: string, cookieStore: Cookies) {
+    const result = await fetch(endpoint + '/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -27,9 +26,8 @@ export async function loginUser(email: string, password: string) {
         body: JSON.stringify({ email, password }),
     });
     if (result.ok) {
-        const cookieStore = useCookies();
         const jsonResult = await result.json();
-        cookieStore.set('token', jsonResult["jwt"]);
+        cookieStore.set('token', jsonResult["token"]);
         return true;
     } else {
         return false;
