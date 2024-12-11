@@ -45,7 +45,7 @@ import { useCookies } from "next-client-cookies";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function NavUser({ user }: { user: UserData }) {
+export default function NavUser() {
   const [data, setData] = useState<UserData|undefined>(undefined);
   const router = useRouter();
   const cookieStore = useCookies();

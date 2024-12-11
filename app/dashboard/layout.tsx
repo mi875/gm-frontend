@@ -77,15 +77,7 @@ export default function DashboardLayout({
           </SidebarGroup>
         </SidebarContent>
         <SidebarFooter>
-          <NavUser
-            user={{
-              name: "めんま（ずんだ）",
-              id: "sinatiku21",
-              avatar:
-                "https://pbs.twimg.com/profile_images/1662061828980232198/wJM1cTBb_400x400.jpg",
-              email: "sinatiku21@sinatiku21.com",
-            }}
-          />
+          <NavUser />
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
