@@ -53,7 +53,7 @@ export default function NavUser() {
   const { theme, setTheme } = useTheme();
   useEffect(() => {
 const fetchUser = async () => {
-  fetchUserData(cookieStore).then((data) => setData(data));
+  fetchUserData(cookieStore,router).then((data) => setData(data));
 };
 fetchUser();
   }, []);

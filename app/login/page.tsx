@@ -40,6 +40,7 @@ export default function Login() {
   const searchParams = useSearchParams();
   const afterSignup = searchParams.get("afterSignup") ? 1 : 0;
   const loginError = searchParams.get("loginError") ? 1 : 0;
+  const invalidToken = searchParams.get("invalidToken") ? 1 : 0;
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });
@@ -76,6 +77,17 @@ export default function Login() {
               <AlertTitle>エラー</AlertTitle>
               <AlertDescription>
                 メールアドレスまたはパスワードが間違っています
+              </AlertDescription>
+            </Alert>
+          ) : (
+            <></>
+          )}
+           {invalidToken ? (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>エラー</AlertTitle>
+              <AlertDescription>
+                セッションが無効になりました。再度ログインしてください
               </AlertDescription>
             </Alert>
           ) : (

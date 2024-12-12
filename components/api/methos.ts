@@ -1,5 +1,6 @@
 import { Cookies } from "next-client-cookies";
 import { UserData } from "../types/user";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
 
 const endpoint = process.env.NEXT_PUBLIC_ENDPOINT;
@@ -41,7 +42,7 @@ export function logoutUser(cookieStore: Cookies) {
 }
 
 
-export async function fetchUserData(cookieStore: Cookies) {
+export async function fetchUserData(cookieStore: Cookies,useRouter:AppRouterInstance) {
     const token = cookieStore.get('token');
     if (!token) {
         return undefined;
@@ -54,6 +55,14 @@ export async function fetchUserData(cookieStore: Cookies) {
     if (result.ok) {
         return await result.json() as UserData;
     } else {
+        if(result.status===401){
+            invalidToken(useRouter,cookieStore);
+        }
         return undefined;
     }
+}
+
+export function invalidToken(useRouter:AppRouterInstance,cookieStore: Cookies) {
+    cookieStore.remove('token');
+    useRouter.push("/login?invalidToken=1");
 }
