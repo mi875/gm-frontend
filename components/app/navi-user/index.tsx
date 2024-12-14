@@ -46,19 +46,19 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function NavUser() {
-  const [data, setData] = useState<UserData|undefined>(undefined);
+  const [data, setData] = useState<UserData | undefined>(undefined);
   const router = useRouter();
   const cookieStore = useCookies();
   const { isMobile } = useSidebar();
   const { theme, setTheme } = useTheme();
   useEffect(() => {
-const fetchUser = async () => {
-  fetchUserData(cookieStore,router).then((data) => setData(data));
-};
-fetchUser();
+    const fetchUser = async () => {
+      fetchUserData(cookieStore, router).then((data) => setData(data));
+    };
+    fetchUser();
   }, []);
   if (!data) {
-    return (<></>);
+    return <></>;
   }
   return (
     <SidebarMenu>
