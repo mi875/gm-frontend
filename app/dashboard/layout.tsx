@@ -1,5 +1,6 @@
 "use client";
 import { fetchSpacesData } from "@/components/api/methos";
+import AddSpace from "@/components/app/add-space";
 import NavUser from "@/components/app/navi-user";
 import { SpaceData } from "@/components/types/space";
 import { Separator } from "@/components/ui/separator";
@@ -41,13 +42,19 @@ export default function DashboardLayout({
     undefined
   );
 
+  const fetchSpaces = async () => {
+    fetchSpacesData(cookieStore, router).then((data) => {
+      setSpacesData(data);
+    });
+  };
+
   useEffect(() => {
-    const fetchSpaces = async () => {
-      fetchSpacesData(cookieStore, router).then((data) => {
-        console.log(data);
-        setSpacesData(data);
-      });
-    };
+    // const fetchSpaces = async () => {
+    //   fetchSpacesData(cookieStore, router).then((data) => {
+    //     console.log(data);
+    //     setSpacesData(data);
+    //   });
+    // };
     fetchSpaces();
   }, []);
 
@@ -76,9 +83,9 @@ export default function DashboardLayout({
 
           <SidebarGroup>
             <SidebarGroupLabel>スペース</SidebarGroupLabel>
-            {spacesData && (
-              <SidebarMenu>
-                {spacesData.map((element) => (
+            <SidebarMenu>
+              {spacesData &&
+                spacesData.map((element) => (
                   <SidebarMenuItem key={element.id}>
                     <SidebarMenuButton
                       asChild
@@ -90,11 +97,15 @@ export default function DashboardLayout({
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
-              </SidebarMenu>
-            )}
+            </SidebarMenu>
           </SidebarGroup>
         </SidebarContent>
         <SidebarFooter>
+          <AddSpace
+            cookieStore={cookieStore}
+            useRouter={router}
+            fetchSpaces={fetchSpaces}
+          />
           <NavUser />
         </SidebarFooter>
       </Sidebar>
