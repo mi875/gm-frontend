@@ -95,6 +95,33 @@ export async function fetchSpacesData(
   }
 }
 
+export async function fetchSpaceData(
+  cookieStore: Cookies,
+  useRouter: AppRouterInstance,
+  id: string
+) {
+  const token = cookieStore.get("token");
+  if (!token) {
+    return undefined;
+  }
+  const result = await fetch(endpoint + `/api/space/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (result.ok) {
+    return (await result.json()) as SpaceData;
+  } else {
+    if (result.status === 401) {
+      invalidToken(useRouter, cookieStore);
+    }
+    if (result.status === 404) {
+      useRouter.push("/dashboard");
+    }
+    return undefined;
+  }
+}
+
 export async function PostSpace(
   space_name: string,
   cookieStore: Cookies,

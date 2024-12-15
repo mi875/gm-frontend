@@ -162,7 +162,7 @@ export default function DashboardLayout({
                   ) : (
                     <>
                       <BreadcrumbItem className="hidden md:block">
-                        <BreadcrumbLink>
+                        <BreadcrumbLink asChild>
                           <Link href={element.link}> {element.label}</Link>
                         </BreadcrumbLink>
                       </BreadcrumbItem>
