@@ -51,8 +51,11 @@ export default function DashboardLayout({
   );
 
   function breadcrumbList() {
-    const breadcrumbItemList: { label: string; link: string; isLast: boolean }[] =
-      [];
+    const breadcrumbItemList: {
+      label: string;
+      link: string;
+      isLast: boolean;
+    }[] = [];
     // make breadcrumb list
     sidebarMenuItemData.forEach((element) => {
       if (pathname.includes(element.link)) {
@@ -173,7 +176,7 @@ export default function DashboardLayout({
             </Breadcrumb>
           </div>
         </header>
-        {children}
+        <div className="container mx-auto px-4">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   );

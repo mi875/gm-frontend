@@ -2,6 +2,7 @@
 
 import { fetchSpaceData } from "@/components/api/methos";
 import { SpaceData } from "@/components/types/space";
+import { Heading } from "@/components/ui/heading";
 import { useCookies } from "next-client-cookies";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -33,12 +34,19 @@ export default function SpacePage({
   return (
     <div>
       {spaceData === undefined ? (
-        <p>Loading...</p>
+        <div className="w-full h-full flex justify-center items-center">
+          Loading...
+        </div>
       ) : (
         <div>
-          <h1>{spaceData.space_name}</h1>
-          <p>{spaceData.id}</p>
-          <p>{spaceData.time_of_born}</p>
+          <div>
+            <Heading>{spaceData.space_name}</Heading>
+          </div>
+          {/* <p>{spaceData.id}</p>
+          <p>{spaceData.time_of_born}</p> */}
+          <div>
+
+          </div>
         </div>
       )}
     </div>
