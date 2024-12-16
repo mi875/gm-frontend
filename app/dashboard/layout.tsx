@@ -99,8 +99,7 @@ export default function DashboardLayout({
   return (
     <SidebarProvider>
       <Sidebar variant="inset">
-        <SidebarHeader></SidebarHeader>
-        <SidebarContent>
+        <SidebarHeader>
           <SidebarGroup>
             <SidebarMenu>
               {sidebarMenuItemData.map((element) => (
@@ -118,7 +117,8 @@ export default function DashboardLayout({
               ))}
             </SidebarMenu>
           </SidebarGroup>
-
+        </SidebarHeader>
+        <SidebarContent>
           <SidebarGroup>
             <SidebarGroupLabel>スペース</SidebarGroupLabel>
             <SidebarMenu>
