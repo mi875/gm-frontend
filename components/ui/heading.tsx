@@ -14,4 +14,6 @@ const Heading = forwardRef<HTMLHeadingElement, React.ComponentProps<"h1">>(
   }
 );
 
+Heading.displayName = "Heading";
+
 export { Heading };
