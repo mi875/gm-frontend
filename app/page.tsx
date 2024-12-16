@@ -14,7 +14,7 @@ export default function Home() {
       </header>
       <main className="">
         <div className=" h-[100svh]">
-          <div className="container">
+          <div className="top_container">
             <div className='box'>
               <h1 className='ims'>Inventory Manager</h1>
               <img src={logo.src} alt="Logo" className='logo'/>

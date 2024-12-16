@@ -2,7 +2,7 @@ html, body {
     margin: 0;
   }
     
-.container {
+.top_container {
 display: flex;
 justify-content: center;
 align-items: center;
@@ -17,6 +17,8 @@ border-radius: 10px;
 text-align: center;
 padding: 20px;
 font-family: Arial, sans-serif;
+max-width: 100%;
+height: auto;
 }
 
 .ims {
