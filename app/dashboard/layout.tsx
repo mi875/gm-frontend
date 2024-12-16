@@ -26,7 +26,6 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { link } from "fs";
 import { History, Home, List } from "lucide-react";
 import { useCookies } from "next-client-cookies";
 import Link from "next/link";
@@ -52,7 +51,7 @@ export default function DashboardLayout({
   );
 
   function breadcrumbList() {
-    var breadcrumbItemList: { label: string; link: string; isLast: boolean }[] =
+    const breadcrumbItemList: { label: string; link: string; isLast: boolean }[] =
       [];
     // make breadcrumb list
     sidebarMenuItemData.forEach((element) => {

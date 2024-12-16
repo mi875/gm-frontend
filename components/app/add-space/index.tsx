@@ -34,7 +34,7 @@ import {
 } from "@/components/ui/sidebar";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, UserRoundPlus } from "lucide-react";
-import { Cookies, useCookies } from "next-client-cookies";
+import { Cookies } from "next-client-cookies";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
