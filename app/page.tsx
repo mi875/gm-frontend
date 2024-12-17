@@ -4,7 +4,6 @@ import Image from "next/image";
 import logo from './logo.png';
 import { Button } from "@/components/ui/button";
 
-console.log(logo);
 
 export default function Home() {
   return (
@@ -17,7 +16,7 @@ export default function Home() {
           <div className="top_container">
             <div className='box'>
               <h1 className='ims'>Inventory Manager</h1>
-              <img src={logo.src} alt="Logo" className='logo'/>
+              <Image width={1846} height={1136} src={logo.src} alt="Logo" className='logo'/>
               <div className="link_button_wrap">
                 <Link className='w-full' href="/login"><Button variant="outline" className='link_button_content'>Login</Button></Link>
                 <Link className='w-full' href="/signup"><Button variant="outline" className='link_button_content'>Sign up</Button></Link>
