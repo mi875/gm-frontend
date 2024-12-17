@@ -45,7 +45,8 @@ export default function SpacePage({
           {/* <p>{spaceData.id}</p>
           <p>{spaceData.time_of_born}</p> */}
           <div>
-
+            <p>{spaceData.id}</p>
+            <p>{spaceData.time_of_born}</p>
           </div>
         </div>
       )}
