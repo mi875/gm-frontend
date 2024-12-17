@@ -2,6 +2,7 @@ import { Cookies } from "next-client-cookies";
 import { UserData } from "../types/user";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { SpaceData } from "../types/space";
+import { Member } from "../types/member";
 
 const endpoint = process.env.NEXT_PUBLIC_ENDPOINT;
 export async function createUser(
@@ -141,6 +142,34 @@ export async function PostSpace(
   });
   if (result.ok) {
     return (await result.json()) as SpaceData;
+  } else {
+    if (result.status === 401) {
+      invalidToken(useRouter, cookieStore);
+    }
+    return undefined;
+  }
+}
+
+export async function AddMember(
+  space_id: string,
+  email: string,
+  cookieStore: Cookies,
+  useRouter: AppRouterInstance
+) {
+  const token = cookieStore.get("token");
+  if (!token) {
+    return undefined;
+  }
+  const result = await fetch(endpoint + `/api/space/${space_id}/member`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ email: email, admin: false }),
+  });
+  if (result.ok) {
+    return (await result.json()) as Member;
   } else {
     if (result.status === 401) {
       invalidToken(useRouter, cookieStore);
