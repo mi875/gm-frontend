@@ -3,6 +3,7 @@ import { UserData } from "../types/user";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { SpaceData } from "../types/space";
 import { Member } from "../types/member";
+import { GoodData } from "../types/good";
 
 const endpoint = process.env.NEXT_PUBLIC_ENDPOINT;
 export async function createUser(
@@ -170,6 +171,64 @@ export async function AddMember(
   });
   if (result.ok) {
     return (await result.json()) as Member;
+  } else {
+    if (result.status === 401) {
+      invalidToken(useRouter, cookieStore);
+    }
+    return undefined;
+  }
+}
+
+export async function postGood(
+  space_id: string,
+  good_name: string,
+  cookieStore: Cookies,
+  useRouter: AppRouterInstance
+) {
+  const token = cookieStore.get("token");
+  if (!token) {
+    return undefined;
+  }
+  const result = await fetch(
+    endpoint + `/api/space/${space_id}/good`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ good_name }),
+    }
+  );
+  if (result.ok) {
+    return true;
+  } else {
+    if (result.status === 401) {
+      invalidToken(useRouter, cookieStore);
+    }
+    return false;
+  }
+}
+
+export async function fetchGoodsData(
+  cookieStore: Cookies,
+  useRouter: AppRouterInstance,
+  space_id: string,
+) {
+  const token = cookieStore.get("token");
+  if (!token) {
+    return undefined;
+  }
+  const result = await fetch(
+    endpoint + `/api/space/${space_id}/good`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  if (result.ok) {
+    return (await result.json()) as GoodData[];
   } else {
     if (result.status === 401) {
       invalidToken(useRouter, cookieStore);

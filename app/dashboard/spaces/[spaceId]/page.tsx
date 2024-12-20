@@ -1,6 +1,8 @@
 "use client";
 
-import { fetchSpaceData } from "@/components/api/methos";
+import { fetchGoodsData, fetchSpaceData } from "@/components/api/methos";
+import GoodsTable from "@/components/app/goods-table";
+import { GoodData } from "@/components/types/good";
 import { SpaceData } from "@/components/types/space";
 import { Heading } from "@/components/ui/heading";
 import { useCookies } from "next-client-cookies";
@@ -15,9 +17,15 @@ export default function SpacePage({
   const cookieStore = useCookies();
   const router = useRouter();
   const [spaceData, setSpaceData] = useState<SpaceData | undefined>(undefined);
+  const [goodsData, setGoodsData] = useState<GoodData[] | undefined>(undefined);
   const fetchSpace = async () => {
     fetchSpaceData(cookieStore, router, spaceId).then((data) => {
       setSpaceData(data);
+    });
+  };
+  const fetchGoods = async () => {
+    fetchGoodsData(cookieStore, router, spaceId).then((data) => {
+      setGoodsData(data);
     });
   };
 
@@ -28,12 +36,13 @@ export default function SpacePage({
     //     setSpacesData(data);
     //   });
     // };
+    fetchGoods();
     fetchSpace();
   }, []);
 
   return (
     <div>
-      {spaceData === undefined ? (
+      {spaceData === undefined || goodsData === undefined ? (
         <div className="w-full h-full flex justify-center items-center">
           Loading...
         </div>
@@ -48,6 +57,13 @@ export default function SpacePage({
             <p>{spaceData.id}</p>
             <p>{spaceData.time_of_born}</p>
           </div>
+          <GoodsTable
+            cookieStore={cookieStore}
+            useRouter={router}
+            spaceId={spaceId}
+            fetchGoods={fetchGoods}
+            data={goodsData}
+          />
         </div>
       )}
     </div>
