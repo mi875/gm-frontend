@@ -2,6 +2,7 @@
 
 import { fetchGoodsData, fetchSpaceData } from "@/components/api/methos";
 import GoodsTable from "@/components/app/goods-table";
+import { SettingsPopup } from "@/components/app/settings-popup";
 import { GoodData } from "@/components/types/good";
 import { SpaceData } from "@/components/types/space";
 import { Heading } from "@/components/ui/heading";
@@ -48,8 +49,9 @@ export default function SpacePage({
         </div>
       ) : (
         <div>
-          <div>
+          <div className="flex justify-between items-center">
             <Heading>{spaceData.space_name}</Heading>
+            <SettingsPopup/>
           </div>
           {/* <p>{spaceData.id}</p>
           <p>{spaceData.time_of_born}</p> */}
