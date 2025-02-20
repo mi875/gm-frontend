@@ -26,7 +26,6 @@ export const columns: ColumnDef<UserData>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const payment = row.original;
 
       return (
         <DropdownMenu>
