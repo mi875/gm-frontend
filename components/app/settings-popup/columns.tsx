@@ -25,7 +25,7 @@ export const columns: ColumnDef<UserData>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => {
+    cell: () => {
 
       return (
         <DropdownMenu>
