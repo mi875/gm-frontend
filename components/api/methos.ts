@@ -182,6 +182,7 @@ export async function AddMember(
 export async function postGood(
   space_id: string,
   good_name: string,
+  description: string,
   cookieStore: Cookies,
   useRouter: AppRouterInstance
 ) {
@@ -197,7 +198,7 @@ export async function postGood(
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ good_name }),
+      body: JSON.stringify({ good_name, description }),
     }
   );
   if (result.ok) {

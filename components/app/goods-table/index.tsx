@@ -30,6 +30,7 @@ import { Input } from "@/components/ui/input";
 import { postGood } from "@/components/api/methos";
 import { Cookies } from "next-client-cookies";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { Textarea } from "@/components/ui/textarea";
 
 const columns: ColumnDef<GoodData>[] = [
   {
@@ -40,11 +41,18 @@ const columns: ColumnDef<GoodData>[] = [
     accessorKey: "can_borrow",
     header: "状態",
   },
+  {
+    accessorKey: "description",
+    header: "説明",
+  },
 ];
 
 const FormSchemaNewGood = z.object({
   good_name: z.string().min(1, {
     message: "物品名は1文字以上である必要があります",
+  }),
+  description: z.string().min(1, {
+    message: "説明は1文字以上である必要があります",
   }),
 });
 
@@ -70,7 +78,13 @@ export default function GoodsTable({
   async function onSubmitNewGood(values: z.infer<typeof FormSchemaNewGood>) {
     setLoading(true);
     try {
-      await postGood(spaceId, values.good_name, cookieStore, useRouter);
+      await postGood(
+        spaceId,
+        values.good_name,
+        values.description,
+        cookieStore,
+        useRouter
+      );
       fetchGoods();
       formNewGood.reset();
     } catch (error) {
@@ -80,11 +94,7 @@ export default function GoodsTable({
     }
   }
   return (
-    <div className="container mx-auto py-10">
-      <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
-        物品一覧
-      </h2>
-
+    <div className="container mx-auto">
       <DataTable columns={columns} data={data} />
       <div className="flex justify-end p-4">
         <Button onClick={() => setIsOpen(true)}>
@@ -102,7 +112,7 @@ export default function GoodsTable({
             <DrawerHeader>
               <DrawerTitle>新しく物品を追加</DrawerTitle>
               <DrawerDescription>
-              物品の詳細を入力してください。
+                物品の詳細を入力してください。
               </DrawerDescription>
             </DrawerHeader>
             <div className="p-4">
@@ -122,6 +132,24 @@ export default function GoodsTable({
                             id="good_name"
                             type="text"
                             placeholder="物品名を入力"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={formNewGood.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem className="grid gap-2">
+                        <FormLabel>説明</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            id="description"
+                            placeholder="説明を入力"
                             {...field}
                           />
                         </FormControl>

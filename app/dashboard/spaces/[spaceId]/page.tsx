@@ -55,10 +55,10 @@ export default function SpacePage({
           </div>
           {/* <p>{spaceData.id}</p>
           <p>{spaceData.time_of_born}</p> */}
-          <div>
+          {/* <div>
             <p>{spaceData.id}</p>
             <p>{spaceData.time_of_born}</p>
-          </div>
+          </div> */}
           <GoodsTable
             cookieStore={cookieStore}
             useRouter={router}
