@@ -5,8 +5,6 @@ import { cn } from "@/lib/utils";
 import {
   BrowserView,
   MobileView,
-  isBrowser,
-  isMobile,
 } from "react-device-detect";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,7 +25,6 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Settings } from "lucide-react";
 import { UserData } from "@/components/types/user";
