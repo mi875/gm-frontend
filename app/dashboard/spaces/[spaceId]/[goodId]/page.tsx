@@ -1,7 +1,15 @@
-"use client"
+"use client";
 
 import { fetchGoodData } from "@/components/api/methos";
 import { GoodData } from "@/components/types/good";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
 import { useCookies } from "next-client-cookies";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -30,9 +38,22 @@ export default function GoodPage({
                 </div>
             ) : (
                 <div>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>{goodData.good_name}</CardTitle>
+                            {/* <CardDescription>Card Description</CardDescription> */}
+                        </CardHeader>
+                        <CardContent>
+                            <p>{goodData.description}</p>
+                        </CardContent>
+                        <CardFooter>
+                            <p>Card Footer</p>
+                        </CardFooter>
+                    </Card>
+
                     <p>{goodData.good_name}</p>
+                    <p>{goodData.description}</p>
                     <p>{goodData.add_email}</p>
-                    <p>{goodData.good_id}</p>
                 </div>
             )}
         </div>
