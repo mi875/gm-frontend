@@ -27,6 +27,7 @@ export default function SpacePage({
   const fetchGoods = async () => {
     fetchGoodsData(cookieStore, router, spaceId).then((data) => {
       setGoodsData(data);
+      console.log(data);
     });
   };
 

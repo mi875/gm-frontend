@@ -167,7 +167,7 @@ export async function AddMember(
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ email: email, admin: false }),
+    body: JSON.stringify({ email: email, name: name, admin: false }),
   });
   if (result.ok) {
     return (await result.json()) as Member;
@@ -190,17 +190,14 @@ export async function postGood(
   if (!token) {
     return undefined;
   }
-  const result = await fetch(
-    endpoint + `/api/space/${space_id}/good`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ good_name, description }),
-    }
-  );
+  const result = await fetch(endpoint + `/api/space/${space_id}/good`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ good_name, description }),
+  });
   if (result.ok) {
     return true;
   } else {
@@ -214,22 +211,44 @@ export async function postGood(
 export async function fetchGoodsData(
   cookieStore: Cookies,
   useRouter: AppRouterInstance,
-  space_id: string,
+  space_id: string
 ) {
   const token = cookieStore.get("token");
   if (!token) {
     return undefined;
   }
-  const result = await fetch(
-    endpoint + `/api/space/${space_id}/good`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+  const result = await fetch(endpoint + `/api/space/${space_id}/good`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   if (result.ok) {
     return (await result.json()) as GoodData[];
+  } else {
+    if (result.status === 401) {
+      invalidToken(useRouter, cookieStore);
+    }
+    return undefined;
+  }
+}
+
+export async function fetchGoodData(
+  cookieStore: Cookies,
+  useRouter: AppRouterInstance,
+  space_id: string,
+  good_id: string
+) {
+  const token = cookieStore.get("token");
+  if (!token) {
+    return undefined;
+  }
+  const result = await fetch(endpoint + `/api/space/${space_id}/good/${good_id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (result.ok) {
+    return (await result.json()) as GoodData;
   } else {
     if (result.status === 401) {
       invalidToken(useRouter, cookieStore);

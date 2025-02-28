@@ -98,13 +98,16 @@ function ProfileForm({ className }: React.ComponentProps<"form">) {
   return (
     <form className={cn("grid items-start gap-4", className)}>
       
-      <div className="grid gap-2">
+      <div className="grid gap-4">
         <Label htmlFor="Members">メンバー</Label>
         <MemberTable columns={columns} data={userTableData} />
       </div>
       <div className="grid gap-4">
+        <Label htmlFor="username">ルーム名</Label>
+      </div>
+      <div className="grid gap-4">
         <Label htmlFor="username">ルームの削除</Label>
-        <Button variant="destructive" className="w-min">削除</Button>
+        <Button variant="destructive" className="w-full">削除</Button>
       </div>
     </form>
   );
