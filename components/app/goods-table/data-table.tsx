@@ -1,5 +1,6 @@
 "use client";
 
+import { GoodData } from "@/components/types/good";
 import {
     ColumnDef,
     flexRender,
@@ -15,7 +16,8 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
@@ -26,6 +28,8 @@ export function DataTable<TData, TValue>({
     columns,
     data,
 }: DataTableProps<TData, TValue>) {
+    const router = useRouter()
+    const pathname = usePathname();
     const table = useReactTable({
         data,
         columns,
@@ -60,6 +64,9 @@ export function DataTable<TData, TValue>({
                             <TableRow
                                 key={row.id}
                                 data-state={row.getIsSelected() && "selected"}
+                                onClick={() => {
+                                    router.push(pathname+"/"+(row.original as GoodData).good_id)
+                                 }}
                             >
                                 {row.getVisibleCells().map((cell) => (
                                     <TableCell key={cell.id}>
@@ -72,7 +79,7 @@ export function DataTable<TData, TValue>({
                             </TableRow>
                         ))
                     ) : (
-                        <TableRow>
+                        <TableRow>        
                             <TableCell
                                 colSpan={columns.length}
                                 className="h-24 text-center"

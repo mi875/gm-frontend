@@ -1,7 +1,8 @@
 "use client";
-import { fetchSpacesData } from "@/components/api/methos";
+import { fetchGoodsData, fetchSpacesData } from "@/components/api/methos";
 import AddSpace from "@/components/app/add-space";
 import NavUser from "@/components/app/navi-user";
+import { GoodData } from "@/components/types/good";
 import { SpaceData } from "@/components/types/space";
 import {
   Breadcrumb,
@@ -49,6 +50,7 @@ export default function DashboardLayout({
   const [spacesData, setSpacesData] = useState<SpaceData[] | undefined>(
     undefined
   );
+   const [goodsData, setGoodsData] = useState<GoodData[] | undefined>(undefined);
 
   function breadcrumbList() {
     const breadcrumbItemList: {
@@ -66,12 +68,25 @@ export default function DashboardLayout({
         });
       }
     });
+    var spaceId: string;
     if (spacesData !== undefined) {
       spacesData.forEach((element) => {
         if (pathname.includes(element.id)) {
+          spaceId = element.id;
           breadcrumbItemList.push({
             label: element.space_name,
             link: "/dashboard/spaces/" + element.id,
+            isLast: false,
+          });
+        }
+      });
+    }
+    if (goodsData !== undefined) {
+      goodsData.forEach((element) => {
+        if (pathname.includes(element.good_id)) {
+          breadcrumbItemList.push({
+            label: element.good_name,
+            link: "/dashboard/spaces/" + spaceId + "/" + element.good_id,
             isLast: false,
           });
         }
@@ -85,99 +100,113 @@ export default function DashboardLayout({
       setSpacesData(data);
     });
   };
+  const fetchGoods = async () => {
+    if (pathname.split("/").length > 4) {
+      {
+        fetchGoodsData(cookieStore, router, pathname.split("/")[3]).then(
+          (data) => {
+            setGoodsData(data);
+          }
+        );
+      }
+    }}
 
-  useEffect(() => {
-    // const fetchSpaces = async () => {
-    //   fetchSpacesData(cookieStore, router).then((data) => {
-    //     console.log(data);
-    //     setSpacesData(data);
-    //   });
-    // };
-    fetchSpaces();
-  }, []);
+    useEffect(() => {
+      // const fetchSpaces = async () => {
+      //   fetchSpacesData(cookieStore, router).then((data) => {
+      //     console.log(data);
+      //     setSpacesData(data);
+      //   });
+      // };
+      fetchSpaces();
+     fetchGoods();
+    }, []);
 
-  return (
-    <SidebarProvider>
-      <Sidebar variant="inset">
-        <SidebarHeader>
-          <SidebarGroup>
-            <SidebarMenu>
-              {sidebarMenuItemData.map((element) => (
-                <SidebarMenuItem key={element.link}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={pathname === element.link}
-                  >
-                    <Link href={element.link}>
-                      <element.icon />
-                      <span>{element.label}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroup>
-        </SidebarHeader>
-        <SidebarContent>
-          <SidebarGroup>
-            <SidebarGroupLabel>スペース</SidebarGroupLabel>
-            <SidebarMenu>
-              {spacesData &&
-                spacesData.map((element) => (
-                  <SidebarMenuItem key={element.id}>
+    return (
+      <SidebarProvider>
+        <Sidebar variant="inset">
+          <SidebarHeader>
+            <SidebarGroup>
+              <SidebarMenu>
+                {sidebarMenuItemData.map((element) => (
+                  <SidebarMenuItem key={element.link}>
                     <SidebarMenuButton
                       asChild
-                      isActive={pathname.split("/").slice(-1)[0] === element.id}
+                      isActive={pathname === element.link}
                     >
-                      <Link href={"/dashboard/spaces/" + element.id}>
-                        <span>{element.space_name}</span>
+                      <Link href={element.link}>
+                        <element.icon />
+                        <span>{element.label}</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
-            </SidebarMenu>
-          </SidebarGroup>
-        </SidebarContent>
-        <SidebarFooter>
-          <AddSpace
-            cookieStore={cookieStore}
-            useRouter={router}
-            fetchSpaces={fetchSpaces}
-          />
-          <NavUser />
-        </SidebarFooter>
-      </Sidebar>
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 h-4" />
-            <Breadcrumb>
-              <BreadcrumbList>
-                {breadcrumbList().map((element) => {
-                  return element.isLast ? (
-                    <>
-                      <BreadcrumbItem className="hidden md:block">
-                        <BreadcrumbPage> {element.label}</BreadcrumbPage>
-                      </BreadcrumbItem>
-                    </>
-                  ) : (
-                    <>
-                      <BreadcrumbItem className="hidden md:block">
-                        <BreadcrumbLink asChild>
-                          <Link href={element.link}> {element.label}</Link>
-                        </BreadcrumbLink>
-                      </BreadcrumbItem>
-                      <BreadcrumbSeparator className="hidden md:block" />
-                    </>
-                  );
-                })}
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
-        </header>
-        <div className="container mx-auto px-4">{children}</div>
-      </SidebarInset>
-    </SidebarProvider>
-  );
-}
+              </SidebarMenu>
+            </SidebarGroup>
+          </SidebarHeader>
+          <SidebarContent>
+            <SidebarGroup>
+              <SidebarGroupLabel>スペース</SidebarGroupLabel>
+              <SidebarMenu>
+                {spacesData &&
+                  spacesData.map((element) => (
+                    <SidebarMenuItem key={element.id}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={
+                          pathname.split("/").slice(-1)[0] === element.id
+                        }
+                      >
+                        <Link href={"/dashboard/spaces/" + element.id}>
+                          <span>{element.space_name}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+              </SidebarMenu>
+            </SidebarGroup>
+          </SidebarContent>
+          <SidebarFooter>
+            <AddSpace
+              cookieStore={cookieStore}
+              useRouter={router}
+              fetchSpaces={fetchSpaces}
+            />
+            <NavUser />
+          </SidebarFooter>
+        </Sidebar>
+        <SidebarInset>
+          <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+            <div className="flex items-center gap-2 px-4">
+              <SidebarTrigger className="-ml-1" />
+              <Separator orientation="vertical" className="mr-2 h-4" />
+              <Breadcrumb>
+                <BreadcrumbList>
+                  {breadcrumbList().map((element) => {
+                    return element.isLast ? (
+                      <>
+                        <BreadcrumbItem className="hidden md:block">
+                          <BreadcrumbPage> {element.label}</BreadcrumbPage>
+                        </BreadcrumbItem>
+                      </>
+                    ) : (
+                      <>
+                        <BreadcrumbItem className="hidden md:block">
+                          <BreadcrumbLink asChild>
+                            <Link href={element.link}> {element.label}</Link>
+                          </BreadcrumbLink>
+                        </BreadcrumbItem>
+                        <BreadcrumbSeparator className="hidden md:block" />
+                      </>
+                    );
+                  })}
+                </BreadcrumbList>
+              </Breadcrumb>
+            </div>
+          </header>
+          <div className="container mx-auto px-4">{children}</div>
+        </SidebarInset>
+      </SidebarProvider>
+    );
+  };
+
