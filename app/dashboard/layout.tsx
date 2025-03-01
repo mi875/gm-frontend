@@ -68,7 +68,7 @@ export default function DashboardLayout({
         });
       }
     });
-    var spaceId: string;
+    let spaceId: string;
     if (spacesData !== undefined) {
       spacesData.forEach((element) => {
         if (pathname.includes(element.id)) {

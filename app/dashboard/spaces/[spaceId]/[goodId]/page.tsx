@@ -5,7 +5,6 @@ import { GoodData } from "@/components/types/good";
 import {
     Card,
     CardContent,
-    CardDescription,
     CardFooter,
     CardHeader,
     CardTitle,
@@ -24,7 +23,9 @@ export default function GoodPage({
     const [goodData, setGoodData] = useState<GoodData | undefined>(undefined);
     const fetchGood = async () => {
         fetchGoodData(cookieStore, router, spaceId, goodId).then((data) => {
-            data && setGoodData(data);
+            if (data) {
+                setGoodData(data);
+            }
         });
     };
     useEffect(() => {
