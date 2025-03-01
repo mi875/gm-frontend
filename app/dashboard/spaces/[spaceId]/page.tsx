@@ -27,7 +27,6 @@ export default function SpacePage({
   const fetchGoods = async () => {
     fetchGoodsData(cookieStore, router, spaceId).then((data) => {
       setGoodsData(data);
-      console.log(data);
     });
   };
 
@@ -52,7 +51,7 @@ export default function SpacePage({
         <div>
           <div className="flex justify-between items-center">
             <Heading>{spaceData.space_name}</Heading>
-            <SettingsPopup/>
+            <SettingsPopup spaceId={spaceId}/>
           </div>
           {/* <p>{spaceData.id}</p>
           <p>{spaceData.time_of_born}</p> */}

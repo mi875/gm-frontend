@@ -319,6 +319,38 @@ export async function postGoodStatus(
     }
 }
 
+export async function postMemberAdmin(
+    cookieStore: Cookies,
+    useRouter: AppRouterInstance,
+    space_id: string,
+    email: string,
+) {
+    const token = cookieStore.get("token");
+    const formData = new FormData()
+    formData.append('email', email)
+    if (!token) {
+        return undefined;
+    }
+    const result = await fetch(
+        endpoint + `/api/space/${space_id}/admin`,
+        {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            body: formData
+        }
+    );
+    if (result.ok) {
+        return true;
+    } else {
+        if (result.status === 401) {
+            invalidToken(useRouter, cookieStore);
+        }
+        return false;
+    }
+}
+
 export function invalidToken(
     useRouter: AppRouterInstance,
     cookieStore: Cookies

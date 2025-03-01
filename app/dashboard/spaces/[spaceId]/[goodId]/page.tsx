@@ -56,14 +56,14 @@ export default function GoodPage({
     };
 
     const toggleGoodStatus = async () => {
-        if (goodData !== undefined && selectedMember !== undefined) {
+        if (goodData !== undefined) {
             setIsLoading(true);
             await postGoodStatus(
                 cookieStore,
                 router,
                 spaceId,
                 goodId,
-                selectedMember.email,
+                selectedMember ? selectedMember.email : "return",
                 goodData.status
             );
             await fetchGood();
@@ -93,7 +93,7 @@ export default function GoodPage({
                                     goodData.status === true ? (
                                         <Badge
                                             variant="default"
-                                            className="w-fit bg-red-500"
+                                            className="w-fit bg-red-500 hover:bg-red-500"
                                         >
                                             {goodData.who_borrow_name}
                                             が借りています

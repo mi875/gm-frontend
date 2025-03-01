@@ -38,7 +38,7 @@ const columns: ColumnDef<GoodData>[] = [
     header: "名前",
   },
   {
-    accessorKey: "can_borrow",
+    accessorKey: "status",
     header: "状態",
   },
   {
