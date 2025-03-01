@@ -1,6 +1,10 @@
 "use client";
 
-import { fetchGoodData } from "@/components/api/methos";
+import {
+    fetchGoodData,
+    fetchMembersData,
+    postGoodStatus,
+} from "@/components/api/methos";
 import { GoodData } from "@/components/types/good";
 import {
     Card,
@@ -17,6 +21,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { Member } from "@/components/types/member";
 
 export default function GoodPage({
     params: { spaceId, goodId },
@@ -26,6 +31,14 @@ export default function GoodPage({
     const cookieStore = useCookies();
     const router = useRouter();
     const [goodData, setGoodData] = useState<GoodData | undefined>(undefined);
+    const [membersData, setMembersData] = useState<Member[] | undefined>(
+        undefined
+    );
+    const [selectedMember, setSelectedMember] = useState<Member | undefined>(
+        undefined
+    );
+    const [isLoading, setIsLoading] = useState(false);
+
     const fetchGood = async () => {
         fetchGoodData(cookieStore, router, spaceId, goodId).then((data) => {
             if (data) {
@@ -33,12 +46,39 @@ export default function GoodPage({
             }
         });
     };
+
+    const fetchMembers = async () => {
+        fetchMembersData(cookieStore, router, spaceId).then((data) => {
+            if (data) {
+                setMembersData(data);
+            }
+        });
+    };
+
+    const toggleGoodStatus = async () => {
+        if (goodData !== undefined && selectedMember !== undefined) {
+            setIsLoading(true);
+            await postGoodStatus(
+                cookieStore,
+                router,
+                spaceId,
+                goodId,
+                selectedMember.email,
+                goodData.status
+            );
+            await fetchGood();
+            setIsLoading(false);
+        }
+    };
+
     useEffect(() => {
         fetchGood();
+        fetchMembers();
     }, []);
+
     return (
         <div>
-            {goodData === undefined ? (
+            {goodData === undefined || membersData === undefined ? (
                 <div className="w-full h-full flex justify-center items-center">
                     Loading...
                 </div>
@@ -55,19 +95,18 @@ export default function GoodPage({
                                             variant="default"
                                             className="w-fit bg-red-500"
                                         >
-                                            貸出中
+                                            {goodData.who_borrow_name}
+                                            が借りています
                                         </Badge>
                                     ) : (
                                         <Badge
                                             variant="default"
-                                            className="w-fit bg-emerald-500"
+                                            className="w-fit bg-emerald-500 hover:bg-emerald-500"
                                         >
                                             貸出可
                                         </Badge>
                                     )}
                                 </div>
-
-                                {/* <CardDescription>Card Description</CardDescription> */}
                             </CardHeader>
                             <CardContent>
                                 <p>{goodData.description}</p>
@@ -77,32 +116,61 @@ export default function GoodPage({
                                     <RadioGroup
                                         defaultValue="comfortable"
                                         className="p-4"
+                                        onValueChange={(value) => {
+                                            setSelectedMember(
+                                                membersData.find(
+                                                    (member) =>
+                                                        member.email == value
+                                                )
+                                            );
+                                        }}
                                     >
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem
-                                                value="default"
-                                                id="r1"
-                                            />
-                                            <Label htmlFor="r1">Default</Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem
-                                                value="comfortable"
-                                                id="r2"
-                                            />
-                                            <Label htmlFor="r2">
-                                                Comfortable
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem
-                                                value="compact"
-                                                id="r3"
-                                            />
-                                            <Label htmlFor="r3">Compact</Label>
-                                        </div>
+                                        {!goodData.status && membersData.map((member) => {
+                                            if (member.admin) {
+                                                return (
+                                                    <div
+                                                        key={member.email}
+                                                        className="flex items-center space-x-2"
+                                                    >
+                                                        <RadioGroupItem
+                                                            value={member.email}
+                                                            id={`r${member.email}`}
+                                                        />
+                                                        <Label
+                                                            htmlFor={`r${member.email}`}
+                                                        >
+                                                            {member.name}
+                                                        </Label>
+                                                    </div>
+                                                );
+                                            }
+                                        })}
                                     </RadioGroup>
-                                    <Button className="w-full">貸し出す</Button>
+                                    {goodData.can_borrow &&
+                                    goodData.status === true ? (
+                                        <Button
+                                            className="w-full"
+                                            onClick={() => {
+                                                toggleGoodStatus();
+                                            }}
+                                            disabled={isLoading}
+                                        >
+                                            返却
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            disabled={
+                                                selectedMember === undefined ||
+                                                isLoading
+                                            }
+                                            className="w-full"
+                                            onClick={() => {
+                                                toggleGoodStatus();
+                                            }}
+                                        >
+                                            貸し出す
+                                        </Button>
+                                    )}
                                 </div>
                             </CardFooter>
                         </Card>
@@ -112,9 +180,6 @@ export default function GoodPage({
                             </Button>
                         </Link>
                     </div>
-                    {/* <p>{goodData.good_name}</p>
-                    <p>{goodData.description}</p>
-                    <p>{goodData.add_email}</p> */}
                 </div>
             )}
         </div>

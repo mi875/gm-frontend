@@ -284,6 +284,41 @@ export async function fetchMembersData(
     }
 }
 
+export async function postGoodStatus(
+    cookieStore: Cookies,
+    useRouter: AppRouterInstance,
+    space_id: string,
+    good_id: string,
+    email: string,
+    viewed_status: boolean
+) {
+    const token = cookieStore.get("token");
+        const formData = new FormData()
+    formData.append('email', email)
+    formData.append('viewed_status', viewed_status.toString())
+    if (!token) {
+        return undefined;
+    }
+    const result = await fetch(
+        endpoint + `/api/space/${space_id}/good/${good_id}`,
+        {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            body: formData
+        }
+    );
+    if (result.ok) {
+        return true;
+    } else {
+        if (result.status === 401) {
+            invalidToken(useRouter, cookieStore);
+        }
+        return false;
+    }
+}
+
 export function invalidToken(
     useRouter: AppRouterInstance,
     cookieStore: Cookies
