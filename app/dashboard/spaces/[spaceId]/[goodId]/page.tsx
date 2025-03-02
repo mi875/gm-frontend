@@ -65,7 +65,7 @@ export default function GoodPage({
                 router,
                 spaceId,
                 goodId,
-                selectedBorrowUserData ? selectedBorrowUserData.email : "",
+                selectedBorrowUserData ? selectedBorrowUserData.email : "return",
                 goodData.status
             );
             await fetchGood();
