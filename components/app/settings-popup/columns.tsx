@@ -12,6 +12,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import { Cookies } from "next-client-cookies";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { AdminBadge } from "../admin-badge";
 
 export function getColumns(
     cookieStore: Cookies,
@@ -31,6 +32,10 @@ export function getColumns(
         {
             accessorKey: "admin",
             header: "Admin",
+            cell: ({ row }) => {
+                const { original } = row;
+                return <AdminBadge isAdmin={original.admin} />;
+            },
         },
         {
             id: "actions",

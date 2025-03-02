@@ -31,6 +31,7 @@ import { postGood } from "@/components/api/methos";
 import { Cookies } from "next-client-cookies";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { Textarea } from "@/components/ui/textarea";
+import { StatusBadge } from "../status-badge";
 
 const columns: ColumnDef<GoodData>[] = [
   {
@@ -40,6 +41,10 @@ const columns: ColumnDef<GoodData>[] = [
   {
     accessorKey: "status",
     header: "状態",
+    cell: ({row}) => {
+      const { original } = row;
+      return (<StatusBadge goodData={original} />);
+    }
   },
   {
     accessorKey: "description",

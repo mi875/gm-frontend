@@ -16,12 +16,12 @@ import {
 import { useCookies } from "next-client-cookies";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Badge } from "@/components/ui/badge";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Member } from "@/components/types/member";
+import { StatusBadge } from "@/components/app/status-badge";
 
 export default function GoodPage({
     params: { spaceId, goodId },
@@ -89,23 +89,7 @@ export default function GoodPage({
                             <CardHeader>
                                 <CardTitle>{goodData.good_name}</CardTitle>
                                 <div className="pt-2">
-                                    {goodData.can_borrow &&
-                                    goodData.status === true ? (
-                                        <Badge
-                                            variant="default"
-                                            className="w-fit bg-red-500 hover:bg-red-500"
-                                        >
-                                            {goodData.who_borrow_name}
-                                            が借りています
-                                        </Badge>
-                                    ) : (
-                                        <Badge
-                                            variant="default"
-                                            className="w-fit bg-emerald-500 hover:bg-emerald-500"
-                                        >
-                                            貸出可
-                                        </Badge>
-                                    )}
+                                    <StatusBadge goodData={goodData} />
                                 </div>
                             </CardHeader>
                             <CardContent>

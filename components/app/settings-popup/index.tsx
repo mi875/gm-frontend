@@ -134,14 +134,15 @@ function ProfileForm({
                 <MemberTable columns={columns} data={members} />
             </div>
             <div className="grid gap-4">
-                <Label htmlFor="username">ルーム名</Label>
+                <Label htmlFor="username">スペースID</Label>
+                <p className="py-2 px-4 font-mono bg-slate-200 dark:bg-slate-800 mx-auto w-fit rounded-lg">{spaceId}</p>
             </div>
-            <div className="grid gap-4">
+            {/* <div className="grid gap-4">
                 <Label htmlFor="username">ルームの削除</Label>
                 <Button variant="destructive" className="w-full">
                     削除
                 </Button>
-            </div>
+            </div> */}
         </form>
     );
 }
