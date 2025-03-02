@@ -1,9 +1,10 @@
 "use client";
 
-import { fetchGoodsData, fetchSpaceData } from "@/components/api/methos";
+import { fetchGoodsData, fetchMembersData, fetchSpaceData } from "@/components/api/methos";
 import GoodsTable from "@/components/app/goods-table";
 import { SettingsPopup } from "@/components/app/settings-popup";
 import { GoodData } from "@/components/types/good";
+import { Member } from "@/components/types/member";
 import { SpaceData } from "@/components/types/space";
 import { Heading } from "@/components/ui/heading";
 import { useCookies } from "next-client-cookies";
@@ -19,6 +20,8 @@ export default function SpacePage({
   const router = useRouter();
   const [spaceData, setSpaceData] = useState<SpaceData | undefined>(undefined);
   const [goodsData, setGoodsData] = useState<GoodData[] | undefined>(undefined);
+  const [membersData, setMembersData] = useState<Member[] | undefined>(undefined);
+
   const fetchSpace = async () => {
     fetchSpaceData(cookieStore, router, spaceId).then((data) => {
       setSpaceData(data);
@@ -29,6 +32,11 @@ export default function SpacePage({
       setGoodsData(data);
     });
   };
+  const fetchMembers = async () => {
+    fetchMembersData(cookieStore, router, spaceId).then((data) => {
+      setMembersData(data);
+    });
+  }
 
   useEffect(() => {
     // const fetchSpaces = async () => {
@@ -39,11 +47,12 @@ export default function SpacePage({
     // };
     fetchGoods();
     fetchSpace();
+    fetchMembers();
   }, []);
 
   return (
     <div>
-      {spaceData === undefined || goodsData === undefined ? (
+      {spaceData === undefined || goodsData === undefined || membersData === undefined ? (
         <div className="w-full h-full flex justify-center items-center">
           Loading...
         </div>
@@ -65,6 +74,7 @@ export default function SpacePage({
             spaceId={spaceId}
             fetchGoods={fetchGoods}
             data={goodsData}
+            membersData={membersData}
           />
         </div>
       )}

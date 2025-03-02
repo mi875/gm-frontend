@@ -4,6 +4,7 @@ import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.share
 import { SpaceData } from "../types/space";
 import { Member } from "../types/member";
 import { GoodData } from "../types/good";
+import { BorrowUserData } from "../types/borrowuser";
 
 const endpoint = process.env.NEXT_PUBLIC_ENDPOINT;
 export async function createUser(
@@ -183,6 +184,7 @@ export async function postGood(
     space_id: string,
     good_name: string,
     description: string,
+    borrow_user_emails: string,
     cookieStore: Cookies,
     useRouter: AppRouterInstance
 ) {
@@ -190,14 +192,20 @@ export async function postGood(
     if (!token) {
         return undefined;
     }
+
+    const formData = new FormData();
+    formData.append('goodName', good_name);
+    formData.append('description', description);
+    formData.append('borrowUserEmails', borrow_user_emails);
+
     const result = await fetch(endpoint + `/api/space/${space_id}/good`, {
         method: "POST",
         headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ good_name, description }),
+        body: formData,
     });
+
     if (result.ok) {
         return true;
     } else {
@@ -293,9 +301,9 @@ export async function postGoodStatus(
     viewed_status: boolean
 ) {
     const token = cookieStore.get("token");
-        const formData = new FormData()
-    formData.append('email', email)
-    formData.append('viewed_status', viewed_status.toString())
+    const formData = new FormData();
+    formData.append("email", email);
+    formData.append("viewed_status", viewed_status.toString());
     if (!token) {
         return undefined;
     }
@@ -306,7 +314,7 @@ export async function postGoodStatus(
             headers: {
                 Authorization: `Bearer ${token}`,
             },
-            body: formData
+            body: formData,
         }
     );
     if (result.ok) {
@@ -323,24 +331,21 @@ export async function postMemberAdmin(
     cookieStore: Cookies,
     useRouter: AppRouterInstance,
     space_id: string,
-    email: string,
+    email: string
 ) {
     const token = cookieStore.get("token");
-    const formData = new FormData()
-    formData.append('email', email)
+    const formData = new FormData();
+    formData.append("email", email);
     if (!token) {
         return undefined;
     }
-    const result = await fetch(
-        endpoint + `/api/space/${space_id}/admin`,
-        {
-            method: "POST",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-            body: formData
-        }
-    );
+    const result = await fetch(endpoint + `/api/space/${space_id}/admin`, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+    });
     if (result.ok) {
         return true;
     } else {
@@ -348,6 +353,34 @@ export async function postMemberAdmin(
             invalidToken(useRouter, cookieStore);
         }
         return false;
+    }
+}
+
+export async function fetchBorrowUsersData(
+    cookieStore: Cookies,
+    useRouter: AppRouterInstance,
+    space_id: string,
+    good_id: string
+) {
+    const token = cookieStore.get("token");
+    if (!token) {
+        return undefined;
+    }
+    const result = await fetch(
+        endpoint + `/api/space/${space_id}/good/${good_id}/borrow`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
+    if (result.ok) {
+        return (await result.json()) as BorrowUserData[];
+    } else {
+        if (result.status === 401) {
+            invalidToken(useRouter, cookieStore);
+        }
+        return undefined;
     }
 }
 

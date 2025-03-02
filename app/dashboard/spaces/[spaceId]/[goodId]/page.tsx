@@ -1,8 +1,8 @@
 "use client";
 
 import {
+    fetchBorrowUsersData,
     fetchGoodData,
-    fetchMembersData,
     postGoodStatus,
 } from "@/components/api/methos";
 import { GoodData } from "@/components/types/good";
@@ -20,8 +20,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Member } from "@/components/types/member";
 import { StatusBadge } from "@/components/app/status-badge";
+import { BorrowUserData } from "@/components/types/borrowuser";
 
 export default function GoodPage({
     params: { spaceId, goodId },
@@ -31,12 +31,12 @@ export default function GoodPage({
     const cookieStore = useCookies();
     const router = useRouter();
     const [goodData, setGoodData] = useState<GoodData | undefined>(undefined);
-    const [membersData, setMembersData] = useState<Member[] | undefined>(
-        undefined
-    );
-    const [selectedMember, setSelectedMember] = useState<Member | undefined>(
-        undefined
-    );
+    const [borrowUsersData, setBorrowUsersData] = useState<
+        BorrowUserData[] | undefined
+    >(undefined);
+    const [selectedBorrowUserData, setSelectedBorrowUserData] = useState<
+        BorrowUserData | undefined
+    >(undefined);
     const [isLoading, setIsLoading] = useState(false);
 
     const fetchGood = async () => {
@@ -47,12 +47,14 @@ export default function GoodPage({
         });
     };
 
-    const fetchMembers = async () => {
-        fetchMembersData(cookieStore, router, spaceId).then((data) => {
-            if (data) {
-                setMembersData(data);
+    const fetchBorrowUsers = async () => {
+        fetchBorrowUsersData(cookieStore, router, spaceId, goodId).then(
+            (data) => {
+                if (data) {
+                    setBorrowUsersData(data);
+                }
             }
-        });
+        );
     };
 
     const toggleGoodStatus = async () => {
@@ -63,7 +65,7 @@ export default function GoodPage({
                 router,
                 spaceId,
                 goodId,
-                selectedMember ? selectedMember.email : "return",
+                selectedBorrowUserData ? selectedBorrowUserData.email : "",
                 goodData.status
             );
             await fetchGood();
@@ -73,12 +75,12 @@ export default function GoodPage({
 
     useEffect(() => {
         fetchGood();
-        fetchMembers();
+        fetchBorrowUsers();
     }, []);
 
     return (
         <div>
-            {goodData === undefined || membersData === undefined ? (
+            {goodData === undefined || borrowUsersData === undefined ? (
                 <div className="w-full h-full flex justify-center items-center">
                     Loading...
                 </div>
@@ -101,16 +103,16 @@ export default function GoodPage({
                                         defaultValue="comfortable"
                                         className="p-4"
                                         onValueChange={(value) => {
-                                            setSelectedMember(
-                                                membersData.find(
+                                            setSelectedBorrowUserData(
+                                                borrowUsersData.find(
                                                     (member) =>
                                                         member.email == value
                                                 )
                                             );
                                         }}
                                     >
-                                        {!goodData.status && membersData.map((member) => {
-                                            if (member.admin) {
+                                        {!goodData.status &&
+                                            borrowUsersData.map((member) => {
                                                 return (
                                                     <div
                                                         key={member.email}
@@ -127,8 +129,7 @@ export default function GoodPage({
                                                         </Label>
                                                     </div>
                                                 );
-                                            }
-                                        })}
+                                            })}
                                     </RadioGroup>
                                     {goodData.can_borrow &&
                                     goodData.status === true ? (
@@ -144,8 +145,10 @@ export default function GoodPage({
                                     ) : (
                                         <Button
                                             disabled={
-                                                selectedMember === undefined ||
-                                                isLoading
+                                                selectedBorrowUserData ===
+                                                undefined
+                                                    ? true
+                                                    : false || isLoading
                                             }
                                             className="w-full"
                                             onClick={() => {
