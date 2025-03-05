@@ -5,6 +5,7 @@ import { SpaceData } from "../types/space";
 import { Member } from "../types/member";
 import { GoodData } from "../types/good";
 import { BorrowUserData } from "../types/borrowuser";
+import { HistoryData } from "../types/history";
 
 const endpoint = process.env.NEXT_PUBLIC_ENDPOINT;
 export async function createUser(
@@ -376,6 +377,33 @@ export async function fetchBorrowUsersData(
     );
     if (result.ok) {
         return (await result.json()) as BorrowUserData[];
+    } else {
+        if (result.status === 401) {
+            invalidToken(useRouter, cookieStore);
+        }
+        return undefined;
+    }
+}
+
+export async function fetchHistoriesData(
+    cookieStore: Cookies,
+    useRouter: AppRouterInstance,
+    space_id: string,
+) {
+    const token = cookieStore.get("token");
+    if (!token) {
+        return undefined;
+    }
+    const result = await fetch(
+        endpoint + `/api/space/${space_id}/history`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
+    if (result.ok) {
+        return (await result.json()) as HistoryData[];
     } else {
         if (result.status === 401) {
             invalidToken(useRouter, cookieStore);
