@@ -39,6 +39,10 @@ const columns: ColumnDef<GoodData>[] = [
     {
         accessorKey: "good_name",
         header: "名前",
+        cell: ({ row }) => {
+            const { original } = row;
+            return <p className="font-bold text-lg">{original.good_name}</p>;
+        }
     },
     {
         accessorKey: "status",
@@ -51,6 +55,10 @@ const columns: ColumnDef<GoodData>[] = [
     {
         accessorKey: "description",
         header: "説明",
+        cell: ({ row }) => {
+            const { original } = row;
+            return <p className="px-2 text-neutral-600 dark:text-neutral-400">{original.description}</p>;
+        }
     },
 ];
 
@@ -110,7 +118,7 @@ export default function GoodsTable({
     return (
         <div className="container mx-auto">
             <DataTable columns={columns} data={data} />
-            <div className="flex justify-end p-4">
+            <div className="fixed bottom-4 right-4">
                 <Button onClick={() => setIsOpen(true)}>
                     <div className="flex items-center">
                         <Plus />
