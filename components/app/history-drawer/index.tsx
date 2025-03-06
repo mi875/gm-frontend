@@ -42,7 +42,7 @@ export const HistoryDrawer = ({ spaceId }: { spaceId: string }) => {
   const fetchHistories = async () => {
     fetchHistoriesData(cookieStore, router, spaceId).then((data) => {
       if (data) {
-        setHistoriesData(data as HistoryData[]);
+        setHistoriesData((data as HistoryData[]).reverse());
       }
     });
   };
@@ -95,7 +95,7 @@ export const HistoryDrawer = ({ spaceId }: { spaceId: string }) => {
   });
 
   return historiesData.length ? (
-    <div>
+    <div className="max-h-[90dvh]">
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerTrigger asChild>
           <Button variant="outline" size="icon">
@@ -111,7 +111,7 @@ export const HistoryDrawer = ({ spaceId }: { spaceId: string }) => {
               </DrawerDescription>
             </DrawerHeader>
           </div>
-          <div className="mx-auto w-[95%] max-w-xl overflow-x-auto">
+          <div className="mx-auto w-[95%] max-w-xl max-h-[80dvh] overflow-auto">
             <Table>
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (

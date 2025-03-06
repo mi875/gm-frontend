@@ -42,7 +42,7 @@ const columns: ColumnDef<GoodData>[] = [
         cell: ({ row }) => {
             const { original } = row;
             return <p className="font-bold text-lg">{original.good_name}</p>;
-        }
+        },
     },
     {
         accessorKey: "status",
@@ -57,8 +57,12 @@ const columns: ColumnDef<GoodData>[] = [
         header: "説明",
         cell: ({ row }) => {
             const { original } = row;
-            return <p className="px-2 text-neutral-600 dark:text-neutral-400">{original.description}</p>;
-        }
+            return (
+                <p className="px-2 text-neutral-600 dark:text-neutral-400">
+                    {original.description}
+                </p>
+            );
+        },
     },
 ];
 
@@ -69,9 +73,11 @@ const FormSchemaNewGood = z.object({
     description: z.string().min(1, {
         message: "説明は1文字以上である必要があります",
     }),
-    borrow_user_emails: z.array(z.string().email()).refine((value) => value.length > 0, {
-        message: "少なくとも1つのメールを選択してください。",
-    }),
+    borrow_user_emails: z
+        .array(z.string().email())
+        .refine((value) => value.length > 0, {
+            message: "少なくとも1つのメールを選択してください。",
+        }),
 });
 
 export default function GoodsTable({
@@ -204,16 +210,20 @@ export default function GoodsTable({
                                                                         id={
                                                                             member.email
                                                                         }
-                                                                        checked={field.value?.includes(
-                                                                            member.email
-                                                                        ) || false}
+                                                                        checked={
+                                                                            field.value?.includes(
+                                                                                member.email
+                                                                            ) ||
+                                                                            false
+                                                                        }
                                                                         onCheckedChange={(
                                                                             checked
                                                                         ) => {
                                                                             return checked
                                                                                 ? field.onChange(
                                                                                       [
-                                                                                          ...field.value || [],
+                                                                                          ...(field.value ||
+                                                                                              []),
                                                                                           member.email,
                                                                                       ]
                                                                                   )
@@ -229,7 +239,11 @@ export default function GoodsTable({
                                                                         }}
                                                                     />
                                                                 </FormControl>
-                                                                <FormLabel htmlFor={member.email}>
+                                                                <FormLabel
+                                                                    htmlFor={
+                                                                        member.email
+                                                                    }
+                                                                >
                                                                     {
                                                                         member.name
                                                                     }
@@ -245,20 +259,24 @@ export default function GoodsTable({
 
                                     <DrawerFooter>
                                         <DrawerClose asChild>
-                                            <Button
-                                                type="button"
-                                                className="w-full m-0"
-                                            >
-                                                キャンセル
-                                            </Button>
+                                            <div className="grid gap-4">
+                                                <Button
+                                                    type="button"
+                                                    className="w-full m-0"
+                                                >
+                                                    キャンセル
+                                                </Button>
+                                                <Button
+                                                    type="submit"
+                                                    className="w-full m-0"
+                                                    disabled={loading} // ローディング中は無効化
+                                                >
+                                                    {loading
+                                                        ? "作成中..."
+                                                        : "作成"}
+                                                </Button>
+                                            </div>
                                         </DrawerClose>
-                                        <Button
-                                            type="submit"
-                                            className="w-full m-0"
-                                            disabled={loading} // ローディング中は無効化
-                                        >
-                                            {loading ? "作成中..." : "作成"}
-                                        </Button>
                                     </DrawerFooter>
                                 </form>
                             </Form>
