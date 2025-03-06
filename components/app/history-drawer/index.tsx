@@ -95,7 +95,7 @@ export const HistoryDrawer = ({ spaceId }: { spaceId: string }) => {
   });
 
   return historiesData.length ? (
-    <div className="max-h-[90dvh]">
+    <div>
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerTrigger asChild>
           <Button variant="outline" size="icon">
@@ -111,7 +111,7 @@ export const HistoryDrawer = ({ spaceId }: { spaceId: string }) => {
               </DrawerDescription>
             </DrawerHeader>
           </div>
-          <div className="mx-auto w-[95%] max-w-xl max-h-[80dvh] overflow-auto">
+          <div className="mx-auto w-[95%] max-w-xl max-h-[60dvh] overflow-auto">
             <Table>
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
