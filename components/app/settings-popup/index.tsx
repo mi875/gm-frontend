@@ -135,7 +135,9 @@ function ProfileForm({
             </div>
             <div className="grid gap-4">
                 <Label htmlFor="username">スペースID</Label>
-                <p className="py-2 px-4 font-mono bg-slate-100 dark:bg-slate-900 mx-auto w-fit rounded-lg">{spaceId}</p>
+                <p className="py-2 px-4 font-mono bg-slate-100 dark:bg-slate-900 mx-auto w-fit rounded-lg">
+                    {spaceId}
+                </p>
             </div>
             {/* <div className="grid gap-4">
                 <Label htmlFor="username">ルームの削除</Label>
