@@ -11,15 +11,15 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Cookies } from "next-client-cookies";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-import { fetchMembersData, updateGood } from "@/components/api/methos";
+import { updateGood } from "@/components/api/methos";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { BorrowUserData } from "@/components/types/borrowuser";
-import { Member } from "@/components/types/member";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Member } from "@/components/types/member";
 
 const FormSchemaEditGood = z.object({
     good_name: z
@@ -43,7 +43,8 @@ export function EditGoodForm({
     router,
     setIsOpen,
     fetchGood,
-    borrowUsersData
+    borrowUsersData,
+    membersData
 }: {
     goodData: GoodData;
     spaceId: string;
@@ -52,24 +53,10 @@ export function EditGoodForm({
     setIsOpen: (isOpen: boolean) => void;
     fetchGood: () => Promise<void>;
     borrowUsersData: BorrowUserData[];
+    membersData: Member[];
 }) {
     const [loading, setLoading] = useState(false);
-    const [membersData, setMembersData] = useState<Member[] | undefined>(undefined)
-    const fetchMembers = async () => {
-        fetchMembersData(cookieStore, router, spaceId).then((data) => {
-            setMembersData(data);
-        });
-    };
-
-    useEffect(() => {
-        // const fetchSpaces = async () => {
-        //   fetchSpacesData(cookieStore, router).then((data) => {
-        //     console.log(data);
-        //     setSpacesData(data);
-        //   });
-        // };
-        fetchMembers();
-    }, []);
+    
 
 
     async function onSubmitNewGood(values: z.infer<typeof FormSchemaEditGood>) {
@@ -101,9 +88,6 @@ export function EditGoodForm({
             borrow_user_emails: borrowUsersData.map((member) => member.email),
         },
     });
-    if (!membersData) {
-        return <div>Loading...</div>
-    }
     return (
         <div className="p-4">
             <Form {...formEditGood}>

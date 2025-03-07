@@ -21,12 +21,15 @@ import {
     DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Pencil } from "lucide-react";
 import { EditGoodForm } from "./edit-good-form";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { Cookies } from "next-client-cookies";
 import { BorrowUserData } from "@/components/types/borrowuser";
+import { Member } from "@/components/types/member";
+import { fetchMembersData, fetchUserData } from "@/components/api/methos";
+import { UserData } from "@/components/types/user";
 
 export function EditGood({
     goodData,
@@ -44,6 +47,32 @@ export function EditGood({
     borrowUsersData: BorrowUserData[];
 }) {
     const [open, setOpen] = useState(false);
+    const [membersData, setMembersData] = useState<Member[] | undefined>(undefined)
+     const [userData, setUserData] = useState<UserData | undefined>(undefined);
+
+    const fetchMembers = async () => {
+        fetchMembersData(cookieStore, router, spaceId).then((data) => {
+            setMembersData(data);
+        });
+    };
+    const fetchUser = async () => {
+          fetchUserData(cookieStore, router).then((data) => setUserData(data));
+        };
+    useEffect(() => {
+        // const fetchSpaces = async () => {
+        //   fetchSpacesData(cookieStore, router).then((data) => {
+        //     console.log(data);
+        //     setSpacesData(data);
+        //   });
+        // };
+        fetchMembers();
+        fetchUser();
+    }, []);
+    if (!membersData || !userData) {
+        return <></>
+    }
+    if(!membersData.map((member)=>(member.admin)&&(member.email===userData.email)).includes(true)) return <></>;
+    
     return (
         <>
             <BrowserView>
@@ -68,6 +97,7 @@ export function EditGood({
                             setIsOpen={setOpen}
                             fetchGood={fetchGood}
                             borrowUsersData={borrowUsersData}
+                            membersData={membersData}
                         />
                     </DialogContent>
                 </Dialog>
@@ -94,6 +124,7 @@ export function EditGood({
                             borrowUsersData={borrowUsersData}
                             setIsOpen={setOpen}
                             fetchGood={fetchGood}
+                            membersData={membersData}
                         />
                         <DrawerFooter className="pt-2">
                             <DrawerClose asChild>
