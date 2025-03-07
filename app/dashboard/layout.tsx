@@ -119,7 +119,7 @@ export default function DashboardLayout({
       //   });
       // };
       fetchSpaces();
-     fetchGoods();
+      fetchGoods();
     }, []);
 
     return (

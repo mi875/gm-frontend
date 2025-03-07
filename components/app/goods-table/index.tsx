@@ -67,17 +67,14 @@ const columns: ColumnDef<GoodData>[] = [
 ];
 
 const FormSchemaNewGood = z.object({
-    good_name: z.string().min(1, {
-        message: "物品名は1文字以上である必要があります",
-    }),
-    description: z.string().min(1, {
-        message: "説明は1文字以上である必要があります",
-    }),
+    good_name: z.string({
+        required_error:"物品名は1文字以上である必要があります"
+    }).min(1,"物品名は1文字以上である必要があります"),
+    description: z.string({
+        required_error:"説明は1文字以上である必要があります"
+    }).min(1,"説明は1文字以上である必要があります"),
     borrow_user_emails: z
-        .array(z.string().email())
-        .refine((value) => value.length > 0, {
-            message: "少なくとも1つのメールを選択してください。",
-        }),
+        .array(z.string().email()).nonempty("貸し出し先を選択してください"),
 });
 
 export default function GoodsTable({
@@ -97,6 +94,9 @@ export default function GoodsTable({
 }) {
     const formNewGood = useForm<z.infer<typeof FormSchemaNewGood>>({
         resolver: zodResolver(FormSchemaNewGood),
+        defaultValues:{
+            borrow_user_emails:[]
+        }
     });
     const [isOpen, setIsOpen] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -118,6 +118,7 @@ export default function GoodsTable({
             console.error("Error creating space:", error);
         } finally {
             setLoading(false);
+            setIsOpen(false);
         }
     }
 
@@ -146,9 +147,7 @@ export default function GoodsTable({
                         <div className="p-4">
                             <Form {...formNewGood}>
                                 <form
-                                    onSubmit={formNewGood.handleSubmit(
-                                        onSubmitNewGood
-                                    )}
+                                    onSubmit={formNewGood.handleSubmit(onSubmitNewGood)}
                                     className="space-y-4"
                                 >
                                     <FormField
@@ -193,60 +192,37 @@ export default function GoodsTable({
                                         name="borrow_user_emails"
                                         render={() => (
                                             <FormItem className="grid gap-2">
-                                                <FormLabel className="my-2">
-                                                    貸し出し先
-                                                </FormLabel>
+                                                <FormLabel className="my-2">貸し出し先</FormLabel>
                                                 {membersData.map((member) => (
                                                     <FormField
                                                         key={member.email}
-                                                        control={
-                                                            formNewGood.control
-                                                        }
+                                                        control={formNewGood.control}
                                                         name="borrow_user_emails"
                                                         render={({ field }) => (
                                                             <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                                                                 <FormControl>
                                                                     <Checkbox
-                                                                        id={
-                                                                            member.email
-                                                                        }
+                                                                        id={member.email}
                                                                         checked={
-                                                                            field.value?.includes(
-                                                                                member.email
-                                                                            ) ||
+                                                                            field.value?.includes(member.email) ||
                                                                             false
                                                                         }
-                                                                        onCheckedChange={(
-                                                                            checked
-                                                                        ) => {
+                                                                        onCheckedChange={(checked) => {
                                                                             return checked
-                                                                                ? field.onChange(
-                                                                                      [
-                                                                                          ...(field.value ||
-                                                                                              []),
-                                                                                          member.email,
-                                                                                      ]
-                                                                                  )
+                                                                                ? field.onChange([
+                                                                                    ...(field.value || []),
+                                                                                    member.email,
+                                                                                ])
                                                                                 : field.onChange(
-                                                                                      field.value.filter(
-                                                                                          (
-                                                                                              email
-                                                                                          ) =>
-                                                                                              email !==
-                                                                                              member.email
-                                                                                      )
-                                                                                  );
+                                                                                    field.value.filter(
+                                                                                        (email) => email !== member.email
+                                                                                    )
+                                                                                );
                                                                         }}
                                                                     />
                                                                 </FormControl>
-                                                                <FormLabel
-                                                                    htmlFor={
-                                                                        member.email
-                                                                    }
-                                                                >
-                                                                    {
-                                                                        member.name
-                                                                    }
+                                                                <FormLabel htmlFor={member.email}>
+                                                                    {member.name}
                                                                 </FormLabel>
                                                             </FormItem>
                                                         )}
@@ -258,25 +234,20 @@ export default function GoodsTable({
                                     />
 
                                     <DrawerFooter>
-                                        <DrawerClose asChild>
-                                            <div className="grid gap-4">
-                                                <Button
-                                                    type="button"
-                                                    className="w-full m-0"
-                                                >
+                                        <div className="grid gap-4">
+                                            <DrawerClose asChild>
+                                                <Button type="button" variant="secondary" className="w-full m-0">
                                                     キャンセル
                                                 </Button>
-                                                <Button
-                                                    type="submit"
-                                                    className="w-full m-0"
-                                                    disabled={loading} // ローディング中は無効化
-                                                >
-                                                    {loading
-                                                        ? "作成中..."
-                                                        : "作成"}
-                                                </Button>
-                                            </div>
-                                        </DrawerClose>
+                                            </DrawerClose>
+                                            <Button
+                                                type="submit"
+                                                className="w-full m-0"
+                                                disabled={loading} // ローディング中は無効化
+                                            >
+                                                {loading ? "作成中..." : "作成"}
+                                            </Button>
+                                        </div>
                                     </DrawerFooter>
                                 </form>
                             </Form>

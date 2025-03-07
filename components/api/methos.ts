@@ -217,6 +217,44 @@ export async function postGood(
     }
 }
 
+export async function updateGood(
+    space_id: string,
+    good_id: string,
+    good_name: string,
+    description: string,
+    borrow_user_emails: string,
+    cookieStore: Cookies,
+    useRouter: AppRouterInstance
+) {
+    const token = cookieStore.get("token");
+    if (!token) {
+        return undefined;
+    }
+
+    const formData = new FormData();
+    formData.append('goodName', good_name);
+    formData.append('description', description);
+    formData.append('borrowUserEmails', borrow_user_emails);
+    console.log(borrow_user_emails);
+    const result = await fetch(endpoint + `/api/space/${space_id}/good/${good_id}`, {
+        method: "PUT",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+    });
+
+    if (result.ok) {
+        return true;
+    } else {
+        if (result.status === 401) {
+            invalidToken(useRouter, cookieStore);
+        }
+        return false;
+    }
+}
+
+
 export async function fetchGoodsData(
     cookieStore: Cookies,
     useRouter: AppRouterInstance,

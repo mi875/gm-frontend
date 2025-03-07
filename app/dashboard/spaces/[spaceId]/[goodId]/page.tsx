@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { StatusBadge } from "@/components/app/status-badge";
 import { BorrowUserData } from "@/components/types/borrowuser";
+import { EditGood } from "@/components/app/edit-good";
 
 export default function GoodPage({
     params: { spaceId, goodId },
@@ -48,13 +49,11 @@ export default function GoodPage({
     };
 
     const fetchBorrowUsers = async () => {
-        fetchBorrowUsersData(cookieStore, router, spaceId, goodId).then(
-            (data) => {
-                if (data) {
-                    setBorrowUsersData(data);
-                }
+        fetchBorrowUsersData(cookieStore, router, spaceId, goodId).then((data) => {
+            if (data) {
+                setBorrowUsersData(data);
             }
-        );
+        });
     };
 
     const toggleGoodStatus = async () => {
@@ -89,7 +88,18 @@ export default function GoodPage({
                     <div className="w-full max-w-[720px] mx-auto grid gap-4">
                         <Card>
                             <CardHeader>
-                                <CardTitle>{goodData.good_name}</CardTitle>
+                                <div className="flex items-center justify-between">
+                                    <CardTitle>{goodData.good_name}</CardTitle>
+                                    <EditGood
+                                        goodData={goodData}
+                                        spaceId={spaceId}
+                                        cookieStore={cookieStore}
+                                        router={router}
+                                        borrowUsersData={borrowUsersData}
+                                        fetchGood={fetchGood}
+                                    />
+                                </div>
+
                                 <div className="pt-2">
                                     <StatusBadge goodData={goodData} />
                                 </div>
@@ -104,10 +114,7 @@ export default function GoodPage({
                                         className="p-4"
                                         onValueChange={(value) => {
                                             setSelectedBorrowUserData(
-                                                borrowUsersData.find(
-                                                    (member) =>
-                                                        member.email == value
-                                                )
+                                                borrowUsersData.find((member) => member.email == value)
                                             );
                                         }}
                                     >
@@ -122,17 +129,14 @@ export default function GoodPage({
                                                             value={member.email}
                                                             id={`r${member.email}`}
                                                         />
-                                                        <Label
-                                                            htmlFor={`r${member.email}`}
-                                                        >
+                                                        <Label htmlFor={`r${member.email}`}>
                                                             {member.name}
                                                         </Label>
                                                     </div>
                                                 );
                                             })}
                                     </RadioGroup>
-                                    {goodData.can_borrow &&
-                                    goodData.status === true ? (
+                                    {goodData.can_borrow && goodData.status === true ? (
                                         <Button
                                             className="w-full"
                                             onClick={() => {
@@ -145,8 +149,7 @@ export default function GoodPage({
                                     ) : (
                                         <Button
                                             disabled={
-                                                selectedBorrowUserData ===
-                                                undefined
+                                                selectedBorrowUserData === undefined
                                                     ? true
                                                     : false || isLoading
                                             }
