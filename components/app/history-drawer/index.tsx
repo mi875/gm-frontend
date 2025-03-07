@@ -98,7 +98,7 @@ export const HistoryDrawer = ({ spaceId }: { spaceId: string }) => {
     <div>
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerTrigger asChild>
-          <Button variant="outline" size="icon">
+          <Button variant="outline" size="icon" onClick={() => {fetchHistories()}}>
             <History />
           </Button>
         </DrawerTrigger>
@@ -156,6 +156,6 @@ export const HistoryDrawer = ({ spaceId }: { spaceId: string }) => {
       </Drawer>
     </div>
   ) : (
-    <div>Loading...</div>
+    <></>
   );
 };
